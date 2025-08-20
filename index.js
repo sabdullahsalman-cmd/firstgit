@@ -1,7 +1,52 @@
 import express from "express";
+import mongoose from "mongoose";
+import Users from "./models/users.js";
 
 const app = express();
 app.use(express.json());
+
+async function dbConnect () {
+  try {
+    await mongoose.connect('mongodb+srv://root:root@cluster0.twkujin.mongodb.net/practice')
+    console.log('database connected')
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+dbConnect()
+
+app.get('/users', async (req, res) => {
+  try {
+    const data = await Users.find();
+
+    res.json({message: "users fetched", data: data})
+  } catch (e) {
+    console.log(e)
+    res.status(500).json({message: "something went wrong"})
+  }
+})
+
+app.post('/users', async (req, res) => {
+  try {
+    const {username, email, password} = req.body;
+
+    const isEmailExists = await Users.findOne({email: email});
+
+    if(isEmailExists){
+      return res.status(500).json({
+        message: "email already exists"
+      })
+    }
+
+    await Users.create({username, email, password})
+
+    res.json({message: "data saved"})
+  } catch (e) {
+    console.log(e)
+    res.status(500).json({message: "something went wrong"})
+  }
+})
 
 app.listen(5000, () => {
   console.log("Server is Online now 🚀");
@@ -13,7 +58,7 @@ app.get("/", (req, res) => {
 });
 
 // Create Account API
-app.post("/create-account", (req, res) => {
+app.post("/login", (req, res) => {
   const { username, email, password, number } = req.body; 
   let errors = [];
 
