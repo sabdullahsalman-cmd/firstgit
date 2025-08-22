@@ -16,30 +16,18 @@ async function dbConnect () {
 
 dbConnect()
 
-app.get('/users', async (req, res) => {
+// query params body - req
+app.post('/practice/:title/', async (req, res) => {
   try {
-    const data = await Users.find();
+    const {username, email} = req.body;
+    const {title} = req.params;
+    const {color, minPrice, category} = req.query
 
-    res.json({message: "users fetched", data: data})
-  } catch (e) {
-    console.log(e)
-    res.status(500).json({message: "something went wrong"})
-  }
-})
+    console.log("body ",username, email);
 
-app.post('/users', async (req, res) => {
-  try {
-    const {username, email, password} = req.body;
+    console.log("params ",title)
 
-    const isEmailExists = await Users.findOne({email: email});
-
-    if(isEmailExists){
-      return res.status(500).json({
-        message: "email already exists"
-      })
-    }
-
-    await Users.create({username, email, password})
+    console.log("query ",color, minPrice, category)
 
     res.json({message: "data saved"})
   } catch (e) {
@@ -47,6 +35,74 @@ app.post('/users', async (req, res) => {
     res.status(500).json({message: "something went wrong"})
   }
 })
+
+// app.get('/users', async (req, res) => {
+//   try {
+//     const data = await Users.find().sort({email: 1}).skip(20).limit(10);
+
+//     res.json({message: "users fetched", data: data})
+//   } catch (e) {
+//     console.log(e)
+//     res.status(500).json({message: "something went wrong"})
+//   }
+// })
+
+// app.get('/users/id', async (req, res) => {
+//   const id = 123
+//   try {
+//     const data = await Users.findById(id);
+
+//     res.json({message: "users fetched", data: data})
+//   } catch (e) {
+//     console.log(e)
+//     res.status(500).json({message: "something went wrong"})
+//   }
+// })
+
+// app.put('/users', async (req, res) => {
+//   const id = 123
+//   try {
+//     const data = await Users.findByIdAndUpdate(id, {username: "hello world", });
+
+//     res.json({message: "users fetched", data: data})
+//   } catch (e) {
+//     console.log(e)
+//     res.status(500).json({message: "something went wrong"})
+//   }
+// })
+
+// app.delete('/users', async (req, res) => {
+//   const id = 123
+//   try {
+//     const data = await Users.findByIdAndDelete(id);
+
+//     res.json({message: "users fetched", data: data})
+//   } catch (e) {
+//     console.log(e)
+//     res.status(500).json({message: "something went wrong"})
+//   }
+// })
+
+// app.post('/users', async (req, res) => {
+//   try {
+//     const {username, email, password} = req.body;
+
+//     const isEmailExists = await Users.findOne({email: email});
+
+//     if(isEmailExists){
+//       return res.status(500).json({
+//         message: "email already exists"
+//       })
+//     }
+
+//     await Users.create({username, email, password})
+
+//     res.json({message: "data saved"})
+//   } catch (e) {
+//     console.log(e)
+//     res.status(500).json({message: "something went wrong"})
+//   }
+// })
 
 app.listen(5000, () => {
   console.log("Server is Online now 🚀");
